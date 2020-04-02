@@ -69,7 +69,8 @@ const reducer = (state = initialState, action) => {
     case FETCH_INGREDIENTS:
       return {
         ...state,
-        ingredients: action.payload
+        ingredients: action.payload,
+        totalPrice: 4
       }
     default:
       return state;
