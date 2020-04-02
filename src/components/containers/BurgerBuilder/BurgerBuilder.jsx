@@ -8,7 +8,11 @@ import OrderSummary from "../../Burger/OrderSummary/OrderSummary";
 import axios from "../../../axios-orders";
 import Spinner from "../../UI/Spinner/Spinner";
 import WithErrorHandler from "../../../HOC/WithErrorHandler/WithErrorHandler";
-import * as actionTypes from "../../../store/actions/actions";
+import {
+  addIngredient,
+  removeIngredient,
+  fetchIngredients
+} from "../../../store/actions/burger";
 
 class BurgerBuilder extends Component {
   state = {
@@ -18,16 +22,9 @@ class BurgerBuilder extends Component {
     error: false
   };
 
-  // componentDidMount() {
-  //   axios
-  //     .get("/ingredients.json")
-  //     .then(response => {
-  //       this.setState({ ingredients: response.data });
-  //     })
-  //     .catch(err => {
-  //       this.setState({ error: true });
-  //     });
-  // }
+  componentDidMount() {
+    this.props.onFetchIngredientsHandler();
+  }
 
   purchaseHandler = () => {
     this.setState({ purchasing: true });
@@ -53,8 +50,11 @@ class BurgerBuilder extends Component {
     let burger = this.state.error ? (
       <p>Ingredients cant be loaded</p>
     ) : (
-      <Spinner />
+      <div style={{ marginTop: "20px" }}>
+        <Spinner />
+      </div>
     );
+
     if (this.props.ingredients) {
       burger = (
         <Aux>
@@ -110,10 +110,9 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
   return {
-    onAddIngredientHandler: type =>
-      dispatch({ type: actionTypes.ADD_INGREDIENT, payload: type }),
-    onRemoveIngredientHandler: type =>
-      dispatch({ type: actionTypes.REMOVE_INGREDIENT, payload: type })
+    onAddIngredientHandler: type => dispatch(addIngredient(type)),
+    onRemoveIngredientHandler: type => dispatch(removeIngredient(type)),
+    onFetchIngredientsHandler: () => dispatch(fetchIngredients())
   };
 };
 

@@ -1,14 +1,10 @@
-import * as actionType from '../actions/actions';
+import { ADD_INGREDIENT, REMOVE_INGREDIENT, FETCH_INGREDIENTS, FETCH_INGREDIENTS_ERROR } from '../actions/burger';
 
 const initialState = {
-  ingredients: {
-    bacon: 0,
-    cheese: 0,
-    meat: 0,
-    salad: 0,
-  },
+  ingredients: null,
   totalPrice: 4,
-  purchasable: false
+  purchasable: false,
+  error: false
 }
 
 const INGREDIENT_PRICES = {
@@ -32,7 +28,7 @@ const updatePurchaseState = ingredients => {
 
 const reducer = (state = initialState, action) => {
   switch (action.type) {
-    case actionType.ADD_INGREDIENT:
+    case ADD_INGREDIENT:
       const ingredientType = action.payload
       const oldCount = state.ingredients[ingredientType];
       const updatedCount = oldCount + 1;
@@ -50,7 +46,7 @@ const reducer = (state = initialState, action) => {
         totalPrice: newPrice,
         purchasable: updatePurchaseState(updatedIngredients) > 0
       }
-    case actionType.REMOVE_INGREDIENT:
+    case REMOVE_INGREDIENT:
       const ingredientTypeToBeDeleted = action.payload
       const count = state.ingredients[ingredientTypeToBeDeleted];
       if (count !== 0) {
@@ -70,6 +66,11 @@ const reducer = (state = initialState, action) => {
         }
       }
       return state;
+    case FETCH_INGREDIENTS:
+      return {
+        ...state,
+        ingredients: action.payload
+      }
     default:
       return state;
   }
