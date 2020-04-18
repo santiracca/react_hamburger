@@ -3,7 +3,6 @@ import { connect } from "react-redux";
 import Button from "../../../UI/Button/Button";
 import Spinner from "../../../UI/Spinner/Spinner";
 import classes from "./ContactData.module.css";
-import axios from "../../../../axios-orders";
 import Input from "../../../UI/Input/Input";
 import { purchaseBurger } from "../../../../store/actions/order";
 import WithErrorHandler from "../../../../HOC/WithErrorHandler/WithErrorHandler";
@@ -15,91 +14,91 @@ class ContactData extends Component {
         elementType: "input",
         elementConfig: {
           type: "text",
-          placeholder: "Your name"
+          placeholder: "Your name",
         },
         value: "",
         validation: {
-          required: true
+          required: true,
         },
         valid: false,
         touched: false,
-        errorMessage: "Please enter a name"
+        errorMessage: "Please enter a name",
       },
       street: {
         elementType: "input",
         elementConfig: {
           type: "text",
-          placeholder: "Street"
+          placeholder: "Street",
         },
         value: "",
         validation: {
-          required: true
+          required: true,
         },
         valid: false,
         touched: false,
-        errorMessage: "Please enter a street"
+        errorMessage: "Please enter a street",
       },
       zipCode: {
         elementType: "input",
         elementConfig: {
           type: "text",
-          placeholder: "Zip code"
+          placeholder: "Zip code",
         },
         value: "",
         validation: {
           required: true,
           minLength: 5,
-          maxLength: 5
+          maxLength: 5,
         },
         valid: false,
         touched: false,
-        errorMessage: "Please enter a zip code"
+        errorMessage: "Please enter a zip code",
       },
       country: {
         elementType: "input",
         elementConfig: {
           type: "text",
-          placeholder: "Country"
+          placeholder: "Country",
         },
         value: "",
         validation: {
-          required: true
+          required: true,
         },
         valid: false,
         touched: false,
-        errorMessage: "Please enter a country"
+        errorMessage: "Please enter a country",
       },
       email: {
         elementType: "input",
         elementConfig: {
           type: "email",
-          placeholder: "Email"
+          placeholder: "Email",
         },
         value: "",
         validation: {
-          required: true
+          required: true,
         },
         valid: false,
         touched: false,
-        errorMessage: "Please enter an email"
+        errorMessage: "Please enter an email",
       },
       deliveryMethod: {
         elementType: "select",
         elementConfig: {
           options: [
             { value: "fastest", displayValue: "Fastest" },
-            { value: "cheapest", displayValue: "Cheapest" }
-          ]
+            { value: "cheapest", displayValue: "Cheapest" },
+          ],
         },
         value: "fastest",
         validation: {},
-        valid: true
-      }
+        valid: true,
+      },
     },
-    formIsValid: false
+    formIsValid: false,
   };
 
-  orderHandler = async e => {
+  orderHandler = async (e) => {
     e.preventDefault();
     const formData = {};
     for (let key in this.state.orderForm) {
@@ -108,7 +107,7 @@ class ContactData extends Component {
     const order = {
       ingredients: this.props.ingredients,
       price: this.props.price,
-      orderData: formData
+      orderData: formData,
     };
     try {
       await this.props.onPurchaseBurgerHandler(order);
@@ -131,7 +130,7 @@ class ContactData extends Component {
 
   inputChangedHandler = (event, inputId) => {
     const updatedOrderForm = {
-      ...this.state.orderForm
+      ...this.state.orderForm,
     };
     const updatedFormElement = { ...updatedOrderForm[inputId] };
     updatedFormElement.value = event.target.value;
@@ -153,12 +152,12 @@ class ContactData extends Component {
     for (let key in this.state.orderForm) {
       formElementsArray.push({
         id: key,
-        config: this.state.orderForm[key]
+        config: this.state.orderForm[key],
       });
     }
     let form = (
       <form>
-        {formElementsArray.map(el => (
+        {formElementsArray.map((el) => (
           <Input
             key={el.id}
             elementType={el.config.elementType}
@@ -168,7 +167,7 @@ class ContactData extends Component {
             touched={el.config.touched}
             shouldValidate={el.config.validation}
             errorMessage={el.config.errorMessage}
-            changed={event => this.inputChangedHandler(event, el.id)}
+            changed={(event) => this.inputChangedHandler(event, el.id)}
           />
         ))}
 
@@ -193,17 +192,17 @@ class ContactData extends Component {
   }
 }
 
-const mapStateToProps = state => {
+const mapStateToProps = (state) => {
   return {
     ingredients: state.burger.ingredients,
     price: state.state.totalPrice,
-    loading: state.orders.loading
+    loading: state.orders.loading,
   };
 };
 
-const mapDispatchToProps = dispatch => {
+const mapDispatchToProps = (dispatch) => {
   return {
-    onPurchaseBurgerHandler: orderData => dispatch(purchaseBurger(orderData))
+    onPurchaseBurgerHandler: (orderData) => dispatch(purchaseBurger(orderData)),
   };
 };
 
