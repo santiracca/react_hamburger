@@ -4,7 +4,7 @@ import Logo from "../../Logo/Logo";
 import NavigationItems from "../NavigationItems/NavigationItems";
 import BurgerIcon from "../../UI/BurgerIcon/BurgerIcon";
 
-const Toolbar = props => {
+const Toolbar = (props) => {
   return (
     <header className={classes.Toolbar}>
       <BurgerIcon onOpen={props.openSideDrawer} />
@@ -12,7 +12,7 @@ const Toolbar = props => {
         <Logo />
       </div>
       <nav className={classes.DesktopOnly}>
-        <NavigationItems />
+        <NavigationItems isAuth={props.isAuth} />
       </nav>
     </header>
   );

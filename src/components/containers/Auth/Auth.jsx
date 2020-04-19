@@ -4,7 +4,7 @@ import Button from "../../UI/Button/Button";
 import Spinner from "../../UI/Spinner/Spinner";
 import styles from "./Auth.module.css";
 import { connect } from "react-redux";
-import { authStart } from "../../../store/actions/auth";
+import { auth } from "../../../store/actions/auth";
 class Auth extends Component {
   state = {
     isSignUp: true,
@@ -83,7 +83,8 @@ class Auth extends Component {
     );
   };
 
-  switchAuthState = () => {
+  switchAuthState = (event) => {
+    event.preventDefault();
     this.setState((prevState) => {
       return {
         isSignUp: !prevState.isSignUp,
@@ -100,7 +101,7 @@ class Auth extends Component {
       });
     }
 
-    const form = formElementsArray.map((formElement) => (
+    let form = formElementsArray.map((formElement) => (
       <Input
         key={formElement.id}
         elementType={formElement.config.elementType}
@@ -113,10 +114,20 @@ class Auth extends Component {
         changed={(event) => this.inputChangedHandler(event, formElement.id)}
       />
     ));
+    if (this.props.loading) {
+      form = <Spinner />;
+    }
+
+    let errorMessage = null;
+    if (this.props.error) {
+      errorMessage = <p>{this.props.error.message}</p>;
+    }
     return (
       <div className={styles.Auth}>
+        {errorMessage}
         <form onSubmit={this.onSubmitHandler}>
           {form}
+
           <Button btnType='Success'>Submit</Button>
           <Button btnType='Danger' clicked={this.switchAuthState}>
             Switch to {this.state.isSignUp ? "SIGNIN" : "SIGNUP"}
@@ -130,13 +141,14 @@ class Auth extends Component {
 const mapStateToProps = (state) => {
   return {
     loading: state.auth.loading,
+    error: state.auth.error,
   };
 };
 
 const mapDispatchToProps = (dispatch) => {
   return {
     onAuth: (email, password, isSignup) =>
-      dispatch(authStart(email, password, isSignup)),
+      dispatch(auth(email, password, isSignup)),
   };
 };
 

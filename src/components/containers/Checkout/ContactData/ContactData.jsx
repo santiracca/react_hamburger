@@ -110,7 +110,7 @@ class ContactData extends Component {
       orderData: formData,
     };
     try {
-      await this.props.onPurchaseBurgerHandler(order);
+      await this.props.onPurchaseBurgerHandler(order, this.props.token);
     } catch (error) {}
   };
 
@@ -197,12 +197,14 @@ const mapStateToProps = (state) => {
     ingredients: state.burger.ingredients,
     price: state.state.totalPrice,
     loading: state.orders.loading,
+    token: state.auth.token,
   };
 };
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    onPurchaseBurgerHandler: (orderData) => dispatch(purchaseBurger(orderData)),
+    onPurchaseBurgerHandler: (orderData, token) =>
+      dispatch(purchaseBurger(orderData, token)),
   };
 };
 

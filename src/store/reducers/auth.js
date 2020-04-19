@@ -1,4 +1,9 @@
-import { AUTH_START, AUTH_SUCCESS, AUTH_FAIL } from "../actions/auth";
+import {
+  AUTH_START,
+  AUTH_SUCCESS,
+  AUTH_FAIL,
+  AUTH_LOGOUT,
+} from "../actions/auth";
 
 const initialState = {
   token: null,
@@ -18,16 +23,22 @@ const authReducer = (state = initialState, action) => {
     case AUTH_SUCCESS:
       return {
         ...state,
-        token: action.idToken,
+        token: action.token,
         userId: action.userId,
         error: null,
-        loadign: false,
+        loading: false,
       };
     case AUTH_FAIL:
       return {
         ...state,
         error: action.error,
         loading: false,
+      };
+    case AUTH_LOGOUT:
+      return {
+        ...state,
+        token: null,
+        userId: null,
       };
     default:
       return state;
