@@ -6,6 +6,7 @@ import classes from "./ContactData.module.css";
 import Input from "../../../UI/Input/Input";
 import { purchaseBurger } from "../../../../store/actions/order";
 import WithErrorHandler from "../../../../HOC/WithErrorHandler/WithErrorHandler";
+import { checkValidity } from "../../../../shared/utility";
 
 class ContactData extends Component {
   state = {
@@ -108,24 +109,11 @@ class ContactData extends Component {
       ingredients: this.props.ingredients,
       price: this.props.price,
       orderData: formData,
+      userId: this.props.userId,
     };
     try {
       await this.props.onPurchaseBurgerHandler(order, this.props.token);
     } catch (error) {}
-  };
-
-  checkValidity = (value, rules) => {
-    let isValid = true;
-    if (rules.required) {
-      isValid = value.trim() !== "" && isValid;
-    }
-    if (rules.minLength) {
-      isValid = value.length >= rules.minLength && isValid;
-    }
-    if (rules.maxLength) {
-      isValid = value.length <= rules.minLength && isValid;
-    }
-    return isValid;
   };
 
   inputChangedHandler = (event, inputId) => {
@@ -134,7 +122,7 @@ class ContactData extends Component {
     };
     const updatedFormElement = { ...updatedOrderForm[inputId] };
     updatedFormElement.value = event.target.value;
-    updatedFormElement.valid = this.checkValidity(
+    updatedFormElement.valid = checkValidity(
       updatedFormElement.value,
       updatedFormElement.validation
     );
@@ -198,6 +186,7 @@ const mapStateToProps = (state) => {
     price: state.state.totalPrice,
     loading: state.orders.loading,
     token: state.auth.token,
+    userIr: state.auth.userId,
   };
 };
 

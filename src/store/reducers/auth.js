@@ -3,6 +3,7 @@ import {
   AUTH_SUCCESS,
   AUTH_FAIL,
   AUTH_LOGOUT,
+  SET_AUTH_REDIRECT,
 } from "../actions/auth";
 
 const initialState = {
@@ -10,6 +11,7 @@ const initialState = {
   userId: null,
   error: null,
   loading: false,
+  authRedirectPath: "/",
 };
 
 const authReducer = (state = initialState, action) => {
@@ -39,6 +41,11 @@ const authReducer = (state = initialState, action) => {
         ...state,
         token: null,
         userId: null,
+      };
+    case SET_AUTH_REDIRECT:
+      return {
+        ...state,
+        authRedirectPath: action.path,
       };
     default:
       return state;

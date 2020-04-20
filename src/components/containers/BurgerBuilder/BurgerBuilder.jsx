@@ -11,23 +11,29 @@ import WithErrorHandler from "../../../HOC/WithErrorHandler/WithErrorHandler";
 import {
   addIngredient,
   removeIngredient,
-  fetchIngredients
+  fetchIngredients,
 } from "../../../store/actions/burger";
+import { setAuthRedirect } from "../../../store/actions/auth";
 
 class BurgerBuilder extends Component {
   state = {
     purchasable: false,
     purchasing: false,
     loading: false,
-    error: false
+    error: false,
   };
 
   componentDidMount() {
+    this.props.onSetAuthRedirectPath("/checkout");
     this.props.onFetchIngredientsHandler();
   }
 
   purchaseHandler = () => {
-    this.setState({ purchasing: true });
+    if (this.props.isAuth) {
+      this.setState({ purchasing: true });
+    } else {
+      this.props.history.push("/auth");
+    }
   };
 
   purchaseContinueHandler = () => {
@@ -40,7 +46,7 @@ class BurgerBuilder extends Component {
 
   render() {
     const disabledInfo = {
-      ...this.props.ingredients
+      ...this.props.ingredients,
     };
     for (let key in disabledInfo) {
       disabledInfo[key] = disabledInfo[key] <= 0;
@@ -64,11 +70,12 @@ class BurgerBuilder extends Component {
             ordered={this.purchaseHandler}
             purchasable={this.props.purchasable}
             price={this.props.totalPrice}
-            ingredientAdded={type => this.props.onAddIngredientHandler(type)}
-            ingredientRemoved={type =>
+            ingredientAdded={(type) => this.props.onAddIngredientHandler(type)}
+            ingredientRemoved={(type) =>
               this.props.onRemoveIngredientHandler(type)
             }
             disabled={disabledInfo}
+            isAuth={this.props.isAuth}
           />
         </Aux>
       );
@@ -100,19 +107,21 @@ class BurgerBuilder extends Component {
   }
 }
 
-const mapStateToProps = state => {
+const mapStateToProps = (state) => {
   return {
     ingredients: state.burger.ingredients,
     totalPrice: state.burger.totalPrice,
-    purchasable: state.burger.purchasable
+    purchasable: state.burger.purchasable,
+    isAuth: state.auth.token !== null,
   };
 };
 
-const mapDispatchToProps = dispatch => {
+const mapDispatchToProps = (dispatch) => {
   return {
-    onAddIngredientHandler: type => dispatch(addIngredient(type)),
-    onRemoveIngredientHandler: type => dispatch(removeIngredient(type)),
-    onFetchIngredientsHandler: () => dispatch(fetchIngredients())
+    onAddIngredientHandler: (type) => dispatch(addIngredient(type)),
+    onRemoveIngredientHandler: (type) => dispatch(removeIngredient(type)),
+    onFetchIngredientsHandler: () => dispatch(fetchIngredients()),
+    onSetAuthRedirectPath: (path) => dispatch(setAuthRedirect(path)),
   };
 };
 
