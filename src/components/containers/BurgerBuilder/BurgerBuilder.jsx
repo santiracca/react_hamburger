@@ -15,7 +15,7 @@ import {
 } from "../../../store/actions/burger";
 import { setAuthRedirect } from "../../../store/actions/auth";
 
-class BurgerBuilder extends Component {
+export class BurgerBuilder extends Component {
   state = {
     purchasable: false,
     purchasing: false,
