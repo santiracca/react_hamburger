@@ -1,21 +1,21 @@
 import React, { Component } from "react";
-import Input from "../../UI/Input/Input";
-import Button from "../../UI/Button/Button";
-import Spinner from "../../UI/Spinner/Spinner";
-import styles from "./Auth.module.css";
 import { connect } from "react-redux";
-import { auth, setAuthRedirect } from "../../../store/actions/auth";
 import { Redirect } from "react-router-dom";
-import { checkValidity } from "../../../shared/utility";
+
+import Input from "../../../components/UI/Input/Input";
+import Button from "../../../components/UI/Button/Button";
+import Spinner from "../../../components/UI/Spinner/Spinner";
+import classes from "./Auth.module.css";
+import { setAuthRedirect, auth } from "../../../store/actions/auth";
+
 class Auth extends Component {
   state = {
-    isSignUp: true,
-    authForm: {
+    controls: {
       email: {
         elementType: "input",
         elementConfig: {
           type: "email",
-          placeholder: "Your email",
+          placeholder: "Mail Address",
         },
         value: "",
         validation: {
@@ -24,13 +24,12 @@ class Auth extends Component {
         },
         valid: false,
         touched: false,
-        errorMessage: "Please enter a valid email",
       },
       password: {
         elementType: "input",
         elementConfig: {
           type: "password",
-          placeholder: "Your password",
+          placeholder: "Password",
         },
         value: "",
         validation: {
@@ -39,9 +38,9 @@ class Auth extends Component {
         },
         valid: false,
         touched: false,
-        errorMessage: "Please enter a valid password",
       },
     },
+    isSignup: true,
   };
 
   componentDidMount() {
@@ -50,48 +49,74 @@ class Auth extends Component {
     }
   }
 
-  inputChangedHandler = (event, inputId) => {
-    const updatedAuthForm = {
-      ...this.state.authForm,
-      [inputId]: {
-        ...this.state.authForm[inputId],
+  checkValidity(value, rules) {
+    let isValid = true;
+    if (!rules) {
+      return true;
+    }
+
+    if (rules.required) {
+      isValid = value.trim() !== "" && isValid;
+    }
+
+    if (rules.minLength) {
+      isValid = value.length >= rules.minLength && isValid;
+    }
+
+    if (rules.maxLength) {
+      isValid = value.length <= rules.maxLength && isValid;
+    }
+
+    if (rules.isEmail) {
+      const pattern = /[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/;
+      isValid = pattern.test(value) && isValid;
+    }
+
+    if (rules.isNumeric) {
+      const pattern = /^\d+$/;
+      isValid = pattern.test(value) && isValid;
+    }
+
+    return isValid;
+  }
+
+  inputChangedHandler = (event, controlName) => {
+    const updatedControls = {
+      ...this.state.controls,
+      [controlName]: {
+        ...this.state.controls[controlName],
         value: event.target.value,
-        valid: checkValidity(
+        valid: this.checkValidity(
           event.target.value,
-          this.state.authForm[inputId].validation
+          this.state.controls[controlName].validation
         ),
         touched: true,
       },
     };
-    this.setState({
-      authForm: updatedAuthForm,
-    });
+    this.setState({ controls: updatedControls });
   };
 
-  onSubmitHandler = (event) => {
+  submitHandler = (event) => {
     event.preventDefault();
     this.props.onAuth(
-      this.state.authForm.email.value,
-      this.state.authForm.password.value,
-      this.state.isSignUp
+      this.state.controls.email.value,
+      this.state.controls.password.value,
+      this.state.isSignup
     );
   };
 
-  switchAuthState = (event) => {
-    event.preventDefault();
+  switchAuthModeHandler = () => {
     this.setState((prevState) => {
-      return {
-        isSignUp: !prevState.isSignUp,
-      };
+      return { isSignup: !prevState.isSignup };
     });
   };
 
   render() {
     const formElementsArray = [];
-    for (let key in this.state.authForm) {
+    for (let key in this.state.controls) {
       formElementsArray.push({
         id: key,
-        config: this.state.authForm[key],
+        config: this.state.controls[key],
       });
     }
 
@@ -102,36 +127,38 @@ class Auth extends Component {
         elementConfig={formElement.config.elementConfig}
         value={formElement.config.value}
         invalid={!formElement.config.valid}
-        touched={formElement.config.touched}
         shouldValidate={formElement.config.validation}
-        errorMessage={formElement.config.errorMessage}
+        touched={formElement.config.touched}
         changed={(event) => this.inputChangedHandler(event, formElement.id)}
       />
     ));
+
     if (this.props.loading) {
       form = <Spinner />;
     }
 
     let errorMessage = null;
+
     if (this.props.error) {
       errorMessage = <p>{this.props.error.message}</p>;
     }
+
     let authRedirect = null;
-    if (this.props.isAuth) {
+    if (this.props.isAuthenticated) {
       authRedirect = <Redirect to={this.props.authRedirectPath} />;
     }
+
     return (
-      <div className={styles.Auth}>
+      <div className={classes.Auth}>
         {authRedirect}
         {errorMessage}
-        <form onSubmit={this.onSubmitHandler}>
+        <form onSubmit={this.submitHandler}>
           {form}
-
-          <Button btnType='Success'>Submit</Button>
-          <Button btnType='Danger' clicked={this.switchAuthState}>
-            Switch to {this.state.isSignUp ? "SIGNIN" : "SIGNUP"}
-          </Button>
+          <Button btnType='Success'>SUBMIT</Button>
         </form>
+        <Button clicked={this.switchAuthModeHandler} btnType='Danger'>
+          SWITCH TO {this.state.isSignup ? "SIGNIN" : "SIGNUP"}
+        </Button>
       </div>
     );
   }
@@ -141,7 +168,7 @@ const mapStateToProps = (state) => {
   return {
     loading: state.auth.loading,
     error: state.auth.error,
-    isAuth: state.auth.token !== null,
+    isAuthenticated: state.auth.token !== null,
     buildingBurger: state.burger.building,
     authRedirectPath: state.auth.authRedirectPath,
   };
