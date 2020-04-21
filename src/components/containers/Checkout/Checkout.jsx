@@ -6,10 +6,6 @@ import ContactData from "./ContactData/ContactData";
 import { purchaseInit } from "../../../store/actions/order";
 
 class Checkout extends Component {
-  componentWillMount() {
-    this.props.onInitPurchase();
-  }
-
   checkoutCancelledHandler = () => {
     this.props.history.goBack();
   };
@@ -40,21 +36,15 @@ class Checkout extends Component {
         </div>
       );
     }
-    return { summary };
+    return summary;
   }
 }
 
-const mapStateToProps = state => {
+const mapStateToProps = (state) => {
   return {
     ingredients: state.burger.ingredients,
-    purchased: state.orders.purchased
+    purchased: state.orders.purchased,
   };
 };
 
-const mapDispatchToProps = dispatch => {
-  return {
-    onInitPurchase: () => dispatch(purchaseInit())
-  };
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(Checkout);
+export default connect(mapStateToProps)(Checkout);

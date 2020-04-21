@@ -1,7 +1,8 @@
 import {
   ADD_INGREDIENT,
   REMOVE_INGREDIENT,
-  FETCH_INGREDIENTS,
+  FETCH_INGREDIENTS_SUCCESS,
+  FETCH_INGREDIENTS_ERROR,
 } from "../actions/burger";
 
 const initialState = {
@@ -72,12 +73,17 @@ const reducer = (state = initialState, action) => {
         };
       }
       return state;
-    case FETCH_INGREDIENTS:
+    case FETCH_INGREDIENTS_SUCCESS:
       return {
         ...state,
         ingredients: action.payload,
         totalPrice: 4,
         building: false,
+      };
+    case FETCH_INGREDIENTS_ERROR:
+      return {
+        ...state,
+        error: true,
       };
     default:
       return state;

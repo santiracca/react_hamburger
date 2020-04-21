@@ -7,6 +7,7 @@ import Input from "../../../UI/Input/Input";
 import { purchaseBurger } from "../../../../store/actions/order";
 import WithErrorHandler from "../../../../HOC/WithErrorHandler/WithErrorHandler";
 import { checkValidity } from "../../../../shared/utility";
+import axios from "../../../../axios-orders";
 
 class ContactData extends Component {
   state = {
@@ -183,10 +184,10 @@ class ContactData extends Component {
 const mapStateToProps = (state) => {
   return {
     ingredients: state.burger.ingredients,
-    price: state.state.totalPrice,
+    price: state.burger.totalPrice,
     loading: state.orders.loading,
     token: state.auth.token,
-    userIr: state.auth.userId,
+    userId: state.auth.userId,
   };
 };
 
@@ -200,4 +201,4 @@ const mapDispatchToProps = (dispatch) => {
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(WithErrorHandler(ContactData));
+)(WithErrorHandler(ContactData, axios));

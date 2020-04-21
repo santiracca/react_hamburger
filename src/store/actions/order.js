@@ -1,12 +1,12 @@
-import axios from "../../axios-orders";
-
 export const PURCHASE_BURGER_SUCCESS = "PURCHASE_BURGER_SUCCESS";
 export const PURCHASE_BURGER_FAIL = "PURCHASE_BURGER_FAIL";
 export const PURCHASE_BURGER_START = "PURCHASE_BURGER_START";
+export const PURCHASE_BURGER = "PURCHASE_BURGER";
 export const PURCHASE_INIT = "PURCHASE_INIT";
 export const FETCH_ORDERS_START = "FETCH_ORDERS_START";
 export const FETCH_ORDERS_SUCCESS = "FETCH_ORDERS_SUCCESS";
 export const FETCH_ORDERS_FAIL = "FETCH_ORDERS_FAIL";
+export const FETCH_ORDERS = "FETCH_ORDERS";
 
 export const fetchOrdersSuccess = (orders) => {
   return { type: FETCH_ORDERS_SUCCESS, payload: orders };
@@ -22,26 +22,11 @@ export const fetchOrdersStart = () => {
   };
 };
 
-export const fetchOrders = (token) => {
-  return (dispatch, getState) => {
-    dispatch(fetchOrdersStart());
-    const userId = getState().auth.userId;
-    const queryParams = `?auth=${token}&orderBy="userId"&equalTo="${userId}"`;
-    axios
-      .get("orders.json?auth=" + queryParams)
-      .then((response) => {
-        const fetchedOrders = [];
-        for (let key in response.data) {
-          fetchedOrders.push({
-            id: key,
-            ...response.data[key],
-          });
-        }
-        dispatch(fetchOrdersSuccess(fetchedOrders));
-      })
-      .catch((err) => {
-        dispatch(fetchOrderFail(err));
-      });
+export const fetchOrders = (token, userId) => {
+  return {
+    type: FETCH_ORDERS,
+    token,
+    userId,
   };
 };
 
@@ -58,17 +43,10 @@ export const purchaseBurgerFail = (error) => {
 };
 
 export const purchaseBurger = (orderData, token) => {
-  return async (dispatch) => {
-    try {
-      dispatch(purchaseBurgerStart());
-      const response = await axios.post(
-        "/orders.json?auth=" + token,
-        orderData
-      );
-      dispatch(purchaseBurgerSuccess(response.data.name, orderData));
-    } catch (error) {
-      dispatch(purchaseBurgerFail(error));
-    }
+  return {
+    type: PURCHASE_BURGER,
+    orderData,
+    token,
   };
 };
 

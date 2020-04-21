@@ -9,10 +9,11 @@ import Logout from "./components/containers/Auth/Logout";
 import { connect } from "react-redux";
 import { authCheckState } from "./store/actions/auth";
 import asyncComponent from "./HOC/async/asyncComponent";
+import Checkout from "./components/containers/Checkout/Checkout";
 
-const asyncCheckout = asyncComponent(() => {
-  return import("./components/containers/Checkout/Checkout");
-});
+// const asyncCheckout = asyncComponent(() => {
+//   return import("./components/containers/Checkout/Checkout");
+// });
 
 class App extends Component {
   componentDidMount() {
@@ -31,7 +32,7 @@ class App extends Component {
         <Switch>
           <Route exact path='/' component={BurgerBuilder} />
           <Route path='/orders' component={Orders} />
-          <Route path='/checkout' component={asyncCheckout} />
+          <Route path='/checkout' component={Checkout} />
           <Route path='/logout' component={Logout} />
           <Route path='/auth' component={Auth} />
 
