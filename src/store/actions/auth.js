@@ -5,6 +5,7 @@ export const AUTH_SUCCESS = "AUTH_SUCCESS";
 export const AUTH_FAIL = "AUTH_FAIL";
 export const AUTH_LOGOUT = "AUTH_LOGOUT";
 export const SET_AUTH_REDIRECT = "SET_AUTH_REDIRECT";
+export const AUTH_INITIATE_LOGOUT = "AUTH_INITIATE_LOGOUT";
 
 export const checkAuthTimeout = (expirationTime) => {
   return (dispatch) => {
@@ -15,11 +16,8 @@ export const checkAuthTimeout = (expirationTime) => {
 };
 
 export const logout = () => {
-  localStorage.removeItem("token");
-  localStorage.removeItem("expirationDate");
-  localStorage.removeItem("userId");
   return {
-    type: AUTH_LOGOUT,
+    type: AUTH_INITIATE_LOGOUT,
   };
 };
 
